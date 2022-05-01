@@ -13,6 +13,7 @@ public class Main {
         //ej.E1_2_2();
         //ej.E1_3();
         //ej.E1_4();
-        ej.E1_5Y6();
+        //ej.E1_5Y6();
+        ej.E2_2();
     }
 }

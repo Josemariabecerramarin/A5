@@ -109,4 +109,27 @@ public class Ejercicios {
 
     }
 
+    public void E2_2(){
+        System.out.println("2.2");
+        System.out.println("Introduce un texto:");
+        String texto = sc.nextLine();
+        byte[] bytes = texto.getBytes(StandardCharsets.UTF_8);
+        KeyPair kp = Xifrar.randomGenerate(1024);
+
+        byte[][] encriptedData = Xifrar.encryptWrappedData(bytes, kp.getPublic());
+
+        byte[] decriptedData;
+        try {
+            decriptedData = Xifrar.decryptWrappedData(encriptedData, kp.getPrivate());
+            String textoFinal = new String(decriptedData, 0, decriptedData.length);
+
+            System.out.println("Texto original: " + texto);
+            System.out.println("Datos encriptados: " + encriptedData);
+            System.out.println("Datos desencriptados: " + decriptedData);
+            System.out.println("Texto al final: " + textoFinal);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

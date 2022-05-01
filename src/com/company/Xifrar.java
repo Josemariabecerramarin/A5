@@ -139,7 +139,7 @@ public class Xifrar {
         return isValid;
     }
 
-    public static byte[][] cryptWrappedData(byte[] data, PublicKey pub) {
+    public static byte[][] encryptWrappedData(byte[] data, PublicKey pub) {
         byte[][] encWrappedData = new byte[2][];
         try {
             //Generamos la clave
@@ -170,23 +170,20 @@ public class Xifrar {
         return encWrappedData;
     }
 
-    public static byte[][] decryptWrappedData(byte[] data, PrivateKey pri) {
-        byte[][] encWrappedData = new byte[2][];
-        try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128);
-            SecretKey sKey = kgen.generateKey();
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, sKey);
-            byte[] encMsg = cipher.doFinal(data);
-            cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.WRAP_MODE, pri);
-            byte[] encKey = cipher.wrap(sKey);
-            encWrappedData[0] = encMsg;
-            encWrappedData[1] = encKey;
-        } catch (Exception  ex) {
-            System.err.println("Ha sucedido un error descifrando: " + ex);
-        }
-        return encWrappedData;
+    public static byte[] decryptWrappedData(byte[][] mensajeEncriptado, PrivateKey pri) throws Exception {
+        //Desencriptado de la clave privada
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "SunJCE");
+        //Iniciar el desenrrollado
+        cipher.init(Cipher.UNWRAP_MODE, pri);
+        //Desenrollado de la clave simetrica
+        Key key = cipher.unwrap(mensajeEncriptado[1], "AES", Cipher.SECRET_KEY);
+
+        //Desencriptado del mensaje
+        cipher = Cipher.getInstance("AES");
+        //Iniciar el desencriptado
+        cipher.init(Cipher.DECRYPT_MODE, key);
+
+        //Devolver dato descifrado
+        return cipher.doFinal(mensajeEncriptado[0]);
     }
 }
